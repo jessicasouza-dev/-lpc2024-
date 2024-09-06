@@ -1,6 +1,9 @@
 # Jucimar Jr
 # 2024
 
+#Jessica Rodrigues de Souza
+#matrícula: 2415310010
+
 import pygame
 
 pygame.init()
