@@ -5,13 +5,14 @@
 #matrícula: 2415310010
 
 import pygame
+import random
 
 pygame.init()
 
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
 
-SCORE_MAX = 2
+SCORE_MAX =10
 
 size = (1280, 720)
 screen = pygame.display.set_mode(size)
@@ -42,6 +43,7 @@ player_1_move_down = False
 # player 2 - robot
 player_2 = pygame.image.load("assets/player.png")
 player_2_y = 300
+player_2_dy = 4
 
 # ball
 ball = pygame.image.load("assets/ball.png")
@@ -95,6 +97,7 @@ while game_loop:
             if player_1_y < ball_y + 25:
                 if player_1_y + 150 > ball_y:
                     ball_dx *= -1
+                    player_2_dy = random.randint(2, 5)
                     bounce_sound_effect.play()
 
         # ball collision with the player 2 's paddle
@@ -102,6 +105,7 @@ while game_loop:
             if player_2_y < ball_y + 25:
                 if player_2_y + 150 > ball_y:
                     ball_dx *= -1
+                    player_2_dy = random.randint(2, 5)
                     bounce_sound_effect.play()
 
         # scoring points
@@ -145,7 +149,16 @@ while game_loop:
             player_1_y = 570
 
         # player 2 "Artificial Intelligence"
-        player_2_y = ball_y
+
+        if ball_dx >= 0:
+
+            if ball_dy <= 0:
+                if player_2_y != ball_y:
+                    player_2_y = player_2_y - player_2_dy
+            elif ball_dy >= 0:
+                if player_2_y != ball_y:
+                    player_2_y = player_2_y + player_2_dy
+
         if player_2_y <= 0:
             player_2_y = 0
         elif player_2_y >= 570:
