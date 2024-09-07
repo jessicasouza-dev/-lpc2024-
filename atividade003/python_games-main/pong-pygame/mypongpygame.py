@@ -194,14 +194,11 @@ while game_loop:
             player_1_y = 570
 
         # player 2 "Artificial Intelligence"
-        if ball_dx >= 0:
-            if player_2_y != ball_y:
-                if player_2_y >= ball_y:
-                    player_2_y -= 5
-                elif player_2_y <= ball_y:
-                    player_2_y += 5
-                else:
-                    player_2_y = player_2_y
+        if ball_dx >= 0 and abs(player_2_y - ball_y) > 2:
+            if player_2_y > ball_y:
+                player_2_y -= 5
+            elif player_2_y < ball_y:
+                player_2_y += 5
 
         if player_2_y <= 0:
             player_2_y = 0
