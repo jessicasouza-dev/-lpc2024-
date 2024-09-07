@@ -12,7 +12,7 @@ pygame.init()
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
 
-SCORE_MAX = 10
+SCORE_MAX = 2
 
 size = (1280, 720)
 screen = pygame.display.set_mode(size)
@@ -30,6 +30,12 @@ victory_text = victory_font .render('VICTORY', True, COLOR_WHITE, COLOR_BLACK)
 victory_text_rect = score_text.get_rect()
 victory_text_rect.center = (450, 350)
 
+# defeat text
+defeat_font = pygame.font.Font('assets/PressStart2P.ttf', 100)
+defeat_text = victory_font .render('DEFEAT', True, COLOR_WHITE, COLOR_BLACK)
+defeat_text_rect = score_text.get_rect()
+defeat_text_rect.center = (500, 350)
+
 # sound effects
 bounce_sound_effect = pygame.mixer.Sound('assets/bounce.wav')
 scoring_sound_effect = pygame.mixer.Sound('assets/258020__kodack__arcade-bleep-sound.wav')
@@ -43,7 +49,7 @@ player_1_move_down = False
 # player 2 - robot
 player_2 = pygame.image.load("assets/player.png")
 player_2_y = 300
-player_2_dy = 4
+player_2_dy = 5
 
 # ball
 ball = pygame.image.load("assets/ball.png")
@@ -96,7 +102,7 @@ while game_loop:
         screen.fill(COLOR_BLACK)
 
         # ball collision with the wall
-        if ball_y > 700:
+        if ball_y >= 700:
             ball_dy *= -1
             bounce_sound_effect.play()
         elif ball_y <= 0:
@@ -104,33 +110,62 @@ while game_loop:
             bounce_sound_effect.play()
 
         # ball collision with the player 1 's paddle
-        if ball_x < 100:
+        if 100 > ball_x > 50:
             if player_1_y < ball_y + 25:
                 if player_1_y + 150 > ball_y:
-                    ball_dx = adjustangles(ball_dx)
-                    player_2_dy = random.randint(4, 5)
                     bounce_sound_effect.play()
+                    print("EU")
+                    print(ball_dx)
+                    print(ball_dy)
+                    print("\n")
+
+                    if ball_y < player_1_y+50:
+                        ball_dy = adjustangles(ball_dy)
+                        ball_dx = random.randint(5, 7)
+
+                    elif ball_y > player_1_y+100:
+                        ball_dy = adjustangles(ball_dy)
+                        ball_dx = random.randint(5, 7)
+
+                    else:
+                        ball_dy = 0
+                        ball_dx = random.randint(5, 7)
 
         # ball collision with the player 2 's paddle
-        if ball_x > 1160:
+        if 1210 > ball_x > 1160:
             if player_2_y < ball_y + 25:
                 if player_2_y + 150 > ball_y:
-                    ball_dx = adjustangles(ball_dx)
                     bounce_sound_effect.play()
+                    print("IA")
+                    print(ball_dx)
+                    print(ball_dy)
+                    print("\n")
+
+                    if ball_y < player_2_y+50:
+                        ball_dy = adjustangles(ball_dy)
+                        ball_dx = random.randint(5, 7) * -1
+
+                    elif ball_y > player_2_y+100:
+                        ball_dy = adjustangles(ball_dy)
+                        ball_dx = random.randint(5, 7) * -1
+
+                    else:
+                        ball_dy = 0
+                        ball_dx = random.randint(5, 7) * -1
 
         # scoring points
         if ball_x <= -50:
             ball_x = 640
             ball_y = 360
-            ball_dy = adjustangles(ball_dx)
-            ball_dx = adjustangles(ball_dx)
+            ball_dy *= -1
+            ball_dx *= -1
             score_2 += 1
             scoring_sound_effect.play()
         elif ball_x >= 1300:
             ball_x = 640
             ball_y = 360
-            ball_dy = adjustangles(ball_dx)
-            ball_dx = adjustangles(ball_dx)
+            ball_dy *= -1
+            ball_dx *= -1
             score_1 += 1
             scoring_sound_effect.play()
 
@@ -160,14 +195,13 @@ while game_loop:
 
         # player 2 "Artificial Intelligence"
         if ball_dx >= 0:
-            if ball_dy <= 0:
-                if player_2_y > ball_y:
-                    player_2_y = player_2_y - player_2_dy
-            elif ball_dy >= 0:
-                if player_2_y < ball_y:
-                    player_2_y = player_2_y + player_2_dy
-            else:
-                player_2_y = 0
+            if player_2_y != ball_y:
+                if player_2_y >= ball_y:
+                    player_2_y -= 5
+                elif player_2_y <= ball_y:
+                    player_2_y += 5
+                else:
+                    player_2_y = player_2_y
 
         if player_2_y <= 0:
             player_2_y = 0
@@ -182,11 +216,17 @@ while game_loop:
         screen.blit(player_1, (50, player_1_y))
         screen.blit(player_2, (1180, player_2_y))
         screen.blit(score_text, score_text_rect)
-    else:
-        # drawing victory
+
+    elif score_2 >= SCORE_MAX:
+        # drawing defeat
         screen.fill(COLOR_BLACK)
         screen.blit(score_text, score_text_rect)
-        screen.blit(victory_text, victory_text_rect)
+        screen.blit(defeat_text, defeat_text_rect)
+    elif score_1 >= SCORE_MAX:
+         # drawing victory
+         screen.fill(COLOR_BLACK)
+         screen.blit(score_text, score_text_rect)
+         screen.blit(victory_text, victory_text_rect)
 
     # update screen
     pygame.display.flip()
