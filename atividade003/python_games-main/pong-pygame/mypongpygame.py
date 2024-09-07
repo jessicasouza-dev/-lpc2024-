@@ -1,8 +1,8 @@
 # Jucimar Jr
 # 2024
 
-#Jessica Rodrigues de Souza
-#matrícula: 2415310010
+# Jessica Rodrigues de Souza
+# matrícula: 2415310010
 
 import pygame
 import random
@@ -12,7 +12,7 @@ pygame.init()
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
 
-SCORE_MAX =10
+SCORE_MAX = 10
 
 size = (1280, 720)
 screen = pygame.display.set_mode(size)
@@ -60,6 +60,17 @@ score_2 = 0
 game_loop = True
 game_clock = pygame.time.Clock()
 
+
+def adjustangles(numero):
+    if numero > 0:
+        resultado = random.randint(5, 7) * -1
+
+    else:
+        resultado = random.randint(5, 7)
+
+    return resultado
+
+
 while game_loop:
 
     for event in pygame.event.get():
@@ -96,31 +107,30 @@ while game_loop:
         if ball_x < 100:
             if player_1_y < ball_y + 25:
                 if player_1_y + 150 > ball_y:
-                    ball_dx *= -1
-                    player_2_dy = random.randint(2, 5)
+                    ball_dx = adjustangles(ball_dx)
+                    player_2_dy = random.randint(4, 5)
                     bounce_sound_effect.play()
 
         # ball collision with the player 2 's paddle
         if ball_x > 1160:
             if player_2_y < ball_y + 25:
                 if player_2_y + 150 > ball_y:
-                    ball_dx *= -1
-                    player_2_dy = random.randint(2, 5)
+                    ball_dx = adjustangles(ball_dx)
                     bounce_sound_effect.play()
 
         # scoring points
-        if ball_x < -50:
+        if ball_x <= -50:
             ball_x = 640
             ball_y = 360
-            ball_dy *= -1
-            ball_dx *= -1
+            ball_dy = adjustangles(ball_dx)
+            ball_dx = adjustangles(ball_dx)
             score_2 += 1
             scoring_sound_effect.play()
-        elif ball_x > 1320:
+        elif ball_x >= 1300:
             ball_x = 640
             ball_y = 360
-            ball_dy *= -1
-            ball_dx *= -1
+            ball_dy = adjustangles(ball_dx)
+            ball_dx = adjustangles(ball_dx)
             score_1 += 1
             scoring_sound_effect.play()
 
@@ -149,15 +159,15 @@ while game_loop:
             player_1_y = 570
 
         # player 2 "Artificial Intelligence"
-
         if ball_dx >= 0:
-
             if ball_dy <= 0:
-                if player_2_y != ball_y:
+                if player_2_y > ball_y:
                     player_2_y = player_2_y - player_2_dy
             elif ball_dy >= 0:
-                if player_2_y != ball_y:
+                if player_2_y < ball_y:
                     player_2_y = player_2_y + player_2_dy
+            else:
+                player_2_y = 0
 
         if player_2_y <= 0:
             player_2_y = 0
